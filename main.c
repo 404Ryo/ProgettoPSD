@@ -5,6 +5,7 @@
 #include "segnalazione.h"
 #include "account.h"
 #include "utils.h"
+#include "colors.h"
 
 // input string sicuro
 void leggiStringa(char *buffer, int size) {
@@ -18,15 +19,22 @@ int main() {
     int isAdmin = 0;
     char username[50];
 
+    screenClear();
+
     // SAFE LOGIN
     do {
         screenClear();
 
-        printf("1. Login\n");
-        printf("2. Registrati\n");
+        printf(cyan "====================================\n" reset);
+        printf(cyan "        ACCESSO\n" reset);
+        printf(cyan "====================================\n" reset);
+        printf(blue "1. Login\n" reset);
+        printf(blue "2. Registrati\n" reset);
 
         printf("Scelta: ");
         scelta = leggiIntero();
+
+        screenClear();
 
         if (scelta == 2) {
             signin();
@@ -56,6 +64,7 @@ int main() {
         switch (scelta) {
 
             case 1:
+                screenClear();
                 lista = aggiungiSegnalazione(lista, username);
                 break;
 
@@ -64,13 +73,20 @@ int main() {
                 break;
 
             case 3:
+                
                 printf("Codice: ");
                 codice = leggiIntero();
 
-                if (cercaPerCodice(lista, codice))
-                    msgSuccess("Trovata");
-                else
+                screenClear();
+
+                Segnalazione* s = cercaPerCodice(lista, codice);
+
+                if (s) {
+                    msgSuccess("Trovata\n");
+                    stampaSegnalazione(s);
+                } else {
                     msgError("Non trovata");
+                }
                 break;
 
             case 4:
@@ -97,6 +113,7 @@ int main() {
                 break;
 
             case 7:
+                screenClear();
                 stampaUrgenti(lista);
                 break;
 

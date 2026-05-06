@@ -18,6 +18,7 @@ Segnalazione* aggiungiSegnalazione(Segnalazione* head, char username[]);
 
 // ================= VISUALIZZAZIONE =================
 void stampaSegnalazioni(Segnalazione* head, char username[], int isAdmin);
+void stampaSegnalazione(Segnalazione* s);
 void stampaPerStato(Segnalazione* head, char stato[]);
 void stampaUrgenti(Segnalazione* head);
 void statoSegnalazioneUtente(Segnalazione* head, char username[]);

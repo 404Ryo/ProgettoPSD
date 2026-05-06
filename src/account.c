@@ -1,8 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "account.h"
 #include <ctype.h>
+
+#include "account.h"
+#include "colors.h" 
 #include "utils.h"
 
 #define FILE_UTENTI "accounts.txt"
@@ -47,7 +49,9 @@ void signin() {
         return;
     }
 
-    printf("=== REGISTRAZIONE ===\n");
+    printf(cyan "====================================\n" reset);
+    printf(cyan "        REGISTRAZIONE\n" reset);
+    printf(cyan "====================================\n" reset);
 
     // username unico
     do {
@@ -57,7 +61,7 @@ void signin() {
         toLowerCase(a.username);
 
         if (userExists(a.username))
-            msgError("Username già esistente");
+            msgError("Username gia' esistente");
 
     } while (userExists(a.username));
 
@@ -88,9 +92,11 @@ int login(char username[], int *isAdmin) {
     char user[50], pass[50];
     Account temp;
 
-    printf("=== LOGIN ===\n");
+    printf(cyan "====================================\n" reset);
+    printf(cyan "        LOGIN\n" reset);
+    printf(cyan "====================================\n" reset);
 
-    printf("Username: ");
+    printf(cyan "Username: " reset);
     scanf("%49s", user);
 
     toLowerCase(user);

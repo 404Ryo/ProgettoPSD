@@ -7,7 +7,11 @@
 
 // ================= SCREEN =================
 void screenClear() {
-    printf("\033[2J\033[H");
+#ifdef _WIN32
+    system("cls");
+#else
+    system("clear");
+#endif
 }
 
 // ================= INPUT INTERO SICURO =================
@@ -114,4 +118,14 @@ void salvaTutto(Segnalazione* head) {
     }
 
     fclose(f);
+}
+
+// ================= CONTROLLO CODICE =================
+int codiceEsiste(Segnalazione* head, int codice) {
+    while (head) {
+        if (head->codice == codice)
+            return 1;
+        head = head->next;
+    }
+    return 0;
 }

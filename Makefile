@@ -9,7 +9,7 @@ SRC = main.c \
 
 OBJ = $(SRC:.c=.o)
 
-TARGET = programma
+TARGET = a
 
 all: $(TARGET)
 

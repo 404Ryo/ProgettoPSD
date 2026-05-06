@@ -1,1 +1,9 @@
-1001|user|illuminazione|as|06/05/2026 11:46|5|chiusa
+1000|admin|illuminazione|aa|06/05/2026 12:40|4|aperta
+1001|user|illuminazione|as|06/05/2026 11:46|3|aperta
+4000|admin|impianti|aa|06/05/2026 12:18|10|in lavorazione
+3000|admin|rifiuti|aa|06/05/2026 12:18|8|in lavorazione
+2000|admin|buche|Buca|06/05/2026 12:41|1000|aperta
+2001|admin|buche|aa|06/05/2026 12:45|111111|aperta
+2000|admin|buche|aa|06/05/2026 12:45|10|aperta
+1000|admin|illuminazione|aaaa|06/05/2026 12:46|10|aperta
+1000|utente|illuminazione|asdasd|06/05/2026 13:09|1|aperta

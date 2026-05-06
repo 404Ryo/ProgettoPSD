@@ -20,16 +20,21 @@ Segnalazione* creaSegnalazione(char username[]) {
 
     int sceltaCategoria;
 
-    printf(cyan "Categoria:\n1) illuminazione\n2) buche\n3) rifiuti\n4) impianti\nScelta: " reset);
+    printf(cyan "Categoria:\n" yellow "1) illuminazione\n2) " blue "buche\n" red "3) rifiuti\n" purple"4) impianti\n" cyan "Scelta: " reset);
     scanf("%d", &sceltaCategoria);
 
     s->codice = generaCodice(sceltaCategoria, s->categoria);
+
+    screenClear();
 
     printf(cyan "Descrizione: " reset);
     scanf(" %[^\n]", s->descrizione);
 
     printf(cyan "Urgenza (1-10): " reset);
     scanf("%d", &s->urgenza);
+
+    if (s->urgenza < 1) s->urgenza = 1;
+    else if (s->urgenza > 10) s->urgenza = 10;
 
     // timestamp automatico
     time_t t = time(NULL);
@@ -57,10 +62,8 @@ Segnalazione* aggiungiSegnalazione(Segnalazione* head, char username[]) {
 
 // ===================== STAMPA =====================
 void stampaSegnalazioni(Segnalazione* head, char username[], int isAdmin) {
-    if (!head) {
-        msgError("Nessuna segnalazione");
-        return;
-    }
+
+    int trovato = 0;
 
     while (head) {
 
@@ -69,17 +72,35 @@ void stampaSegnalazioni(Segnalazione* head, char username[], int isAdmin) {
             continue;
         }
 
-        printf(yellow "\n---------------------\n" reset);
-        printf("Codice: %d\n", head->codice);
-        printf("Utente: %s\n", head->utente);
-        printf("Categoria: %s\n", head->categoria);
-        printf("Descrizione: %s\n", head->descrizione);
-        printf("Data: %s\n", head->data);
-        printf("Urgenza: %d\n", head->urgenza);
-        printf("Stato: %s\n", head->stato);
+        printf(cyan "\n---------------------\n" reset);
+        printf(cyan "Codice: " purple "%d\n" reset, head->codice);
+        printf(cyan "Utente: " blue "%s\n" reset, head->utente);
+        printf(cyan "Categoria: " yellow "%s\n" reset, head->categoria);
+        printf(cyan "Descrizione: %s\n" reset, head->descrizione);
+        printf(cyan "Data: %s\n" reset, head->data);
+        printf(cyan "Urgenza: " red "%d\n" reset, head->urgenza);
+        printf(cyan "Stato: " green "%s\n" reset, head->stato);
 
+        trovato = 1;
         head = head->next;
     }
+
+    if (!trovato) {
+        msgError("Nessuna segnalazione disponibile");
+    }
+}
+
+// ===================== STAMPA SEGNALAZIONE=====================
+void stampaSegnalazione(Segnalazione* s) {
+    if (!s) return;
+
+    printf(cyan "Codice: " purple "%d\n" reset, s->codice);
+    printf(cyan "Utente: " blue "%s\n" reset, s->utente);
+    printf(cyan "Categoria: " yellow "%s\n" reset, s->categoria);
+    printf(cyan "Descrizione: %s\n" reset, s->descrizione);
+    printf(cyan "Data: %s\n" reset, s->data);
+    printf(cyan "Urgenza: " red "%d\n" reset, s->urgenza);
+    printf(cyan "Stato: " green "%s\n" reset, s->stato);
 }
 
 // ===================== Stato Segnalazione Utente =====================
@@ -171,31 +192,8 @@ void aggiornaStato(Segnalazione* head, int isAdmin) {
 
     screenClear();
 
-    Segnalazione* tmp = head;
-    int trovate = 0;
-
-    printf(cyan "\n====================================\n" reset);
-    printf(cyan "        SEGNALAZIONI APERTE\n" reset);
-    printf(cyan "====================================\n" reset);
-
-    while (tmp) {
-        if (strcmp(tmp->stato, "aperta") == 0 || strcmp(tmp->stato, "in lavorazione") == 0) {
-
-            printf("\n---------------------\n");
-            printf(cyan "Codice: " reset purple "%d\n" reset, tmp->codice);
-            printf(cyan "Tipologia:" reset yellow" %s\n" reset, tmp->categoria);
-            printf(cyan "Descrizione: %s\n" reset, tmp->descrizione);
-            printf(cyan "Stato: %s\n" reset, tmp->stato);
-
-            trovate = 1;
-        }
-        tmp = tmp->next;
-    }
-
-    if (!trovate) {
-        msgInfo("Nessuna segnalazione aperta");
-        return;
-    }
+    // ================= RIUSA FUNZIONE =================
+    stampaAperteAdmin(head);
 
     int codice;
     printf("\nInserisci codice da aggiornare: ");
@@ -208,16 +206,17 @@ void aggiornaStato(Segnalazione* head, int isAdmin) {
         return;
     }
 
-    // ===== SCELTA STATO SICURA =====
+    // ================= MENU STATO =================
     screenClear();
+
     printf(cyan "\n====================================\n" reset);
     printf(cyan "        AGGIORNA STATO\n" reset);
     printf(cyan "====================================\n" reset);
 
-    printf(cyan "\nNuovo stato:\n" reset);
-    printf(green "1. aperta\n" reset);
+    printf(green  "1. aperta\n" reset);
     printf(yellow "2. in lavorazione\n" reset);
-    printf(red "3. chiusa\n" reset);
+    printf(red    "3. chiusa\n" reset);
+
     printf(cyan "Scelta: " reset);
 
     int scelta = leggiIntero();
@@ -236,7 +235,7 @@ void aggiornaStato(Segnalazione* head, int isAdmin) {
             msgError("Scelta non valida");
             return;
     }
-    free(tmp);
+
     salvaTutto(head);
 
     msgSuccess("Stato aggiornato e salvato");
@@ -246,16 +245,18 @@ void aggiornaStato(Segnalazione* head, int isAdmin) {
 void stampaAperteAdmin(Segnalazione* head) {
     int trovate = 0;
 
-    printf(cyan "\n=== SEGNALAZIONI APERTE ===\n" reset);
+    printf(cyan "\n====================================\n" reset);
+    printf(cyan "        SEGNALAZIONI APERTE\n" reset);
+    printf(cyan "====================================\n" reset);
 
     while (head) {
         if (strcmp(head->stato, "aperta") == 0) {
 
             printf(cyan "\n---------------------\n" reset);
             printf(cyan "Codice: " purple "%d\n" reset, head->codice);
-            printf(cyan "Tipologia: "purple "%s\n" reset, head->categoria);
-            printf(cyan "Descrizione: "purple "%s\n" reset, head->descrizione);
-            printf(cyan "Stato: " purple "%s\n" reset, head->stato);
+            printf(cyan "Tipologia: " yellow "%s\n" reset, head->categoria);
+            printf(cyan "Descrizione: %s\n" reset, head->descrizione);
+            printf(cyan "Stato: " green "%s\n" reset, head->stato);
 
             trovate = 1;
         }
@@ -284,11 +285,67 @@ void stampaPerStato(Segnalazione* head, char stato[]) {
 
 // ===================== URGENTI =====================
 void stampaUrgenti(Segnalazione* head) {
-    while (head) {
-        if (head->urgenza >= 8)
-            printf("URGENTE %d - %s\n", head->codice, head->descrizione);
 
-        head = head->next;
+    if (!head) {
+        msgError("Nessuna segnalazione");
+        return;
+    }
+
+    printf(red "\n====================================\n" reset);
+    printf(red "        SEGNALAZIONI URGENTI\n" reset);
+    printf(red "====================================\n" reset);
+
+    Segnalazione* tmp = head;
+    int trovate = 0;
+
+    // ================= URGENTI (>= 8) =================
+    while (tmp) {
+
+        if (strcmp(tmp->stato, "chiusa") != 0 && tmp->urgenza >= 8) {
+
+            printf(cyan "Urgenza: " green "%d\n" reset, tmp->urgenza);
+            printf(cyan "Codice: " purple "%d\n" reset, tmp->codice);
+            printf(cyan "Categoria: " yellow "%s\n" reset, tmp->categoria);
+            printf(cyan "Descrizione: %s\n" reset, tmp->descrizione);
+            printf(cyan "---------------------\n" reset);
+
+            trovate = 1;
+        }
+
+        tmp = tmp->next;
+    }
+
+    if (!trovate) {
+        msgInfo("Nessuna segnalazione urgente (>= 8)");
+        return;
+    }
+
+    // ================= MENO URGENTI =================
+    printf(blue "\n====================================\n" reset);
+    printf(blue "        MENO URGENTI\n" reset);
+    printf(blue "====================================\n" reset);
+
+    tmp = head;
+    trovate = 0;
+
+    while (tmp) {
+
+        if (strcmp(tmp->stato, "chiusa") != 0 && tmp->urgenza < 8) {
+
+            printf(cyan "Urgenza: " green "%d\n" reset, tmp->urgenza);
+            printf(cyan "Codice: " purple "%d\n" reset, tmp->codice);
+            printf(cyan "Categoria: " yellow "%s\n" reset, tmp->categoria);
+            printf(cyan "Descrizione: %s\n" reset, tmp->descrizione);
+            printf(cyan "---------------------\n" reset);
+
+            trovate = 1;
+        }
+
+        tmp = tmp->next;
+    }
+
+    if (!trovate) {
+        msgInfo("Nessuna segnalazione meno urgente");
     }
 }
 
