@@ -24,10 +24,11 @@ void statoSegnalazioneUtente(Segnalazione* head, char username[]);
 
 // ================= RICERCA =================
 Segnalazione* cercaPerCodice(Segnalazione* head, int codice);
-void cercaPerCategoria(Segnalazione* head, char categoria[]);
+void cercaPerCategoria(Segnalazione* head);
 
 // ================= ADMIN =================
-void aggiornaStato(Segnalazione* head, int codice, int isAdmin);
+void aggiornaStato(Segnalazione* head, int isAdmin);
+void stampaAperteAdmin(Segnalazione* head);
 Segnalazione* eliminaSegnalazione(Segnalazione* head, int codice, int isAdmin);
 
 // ================= REPORT =================

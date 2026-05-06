@@ -6,20 +6,26 @@
 #include "account.h"
 #include "utils.h"
 
+// input string sicuro
+void leggiStringa(char *buffer, int size) {
+    fgets(buffer, size, stdin);
+    buffer[strcspn(buffer, "\n")] = 0;
+}
+
 int main() {
 
     int scelta;
     int isAdmin = 0;
     char username[50];
 
-    // LOGIN SAFE
+    // SAFE LOGIN
     do {
         screenClear();
 
         printf("1. Login\n");
         printf("2. Registrati\n");
-        printf("Scelta: ");
 
+        printf("Scelta: ");
         scelta = leggiIntero();
 
         if (scelta == 2) {
@@ -30,21 +36,21 @@ int main() {
     } while (scelta != 1 || !login(username, &isAdmin));
 
     Segnalazione* lista = caricaSegnalazioni();
-    if (!lista) {
-        msgInfo("Lista vuota");
-    }
+
+    // LISTA VUOTA
+    if (!lista) msgInfo("Lista vuota");
 
     int codice;
-    char categoria[50], stato[50];
+    char stato[50];
 
-    // MENU LOOP
+    getchar();
+    // LOOP
     do {
         screenClear();
 
         if (isAdmin) menuAdmin();
         else menuUser();
 
-        printf("Scelta: ");
         scelta = leggiIntero();
 
         switch (scelta) {
@@ -71,24 +77,21 @@ int main() {
                 if (!isAdmin)
                     statoSegnalazioneUtente(lista, username);
                 else {
-                    printf("Categoria: ");
-                    scanf("%49s", categoria);
-                    cercaPerCategoria(lista, categoria);
+                    screenClear();
+                    cercaPerCategoria(lista);
                 }
                 break;
 
             case 5:
                 if (isAdmin) {
-                    printf("Codice: ");
-                    codice = leggiIntero();
-                    aggiornaStato(lista, codice, isAdmin);
+                    aggiornaStato(lista, isAdmin);
                 }
                 break;
 
             case 6:
                 if (isAdmin) {
                     printf("Stato: ");
-                    scanf("%49s", stato);
+                    leggiStringa(stato, 50);
                     stampaPerStato(lista, stato);
                 }
                 break;
@@ -109,7 +112,6 @@ int main() {
                 if (isAdmin)
                     generaReport(lista);
                 break;
-
         }
 
         pause();

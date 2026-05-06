@@ -20,7 +20,7 @@ int leggiIntero() {
         if (sscanf(buffer, "%d", &valore) == 1)
             return valore;
 
-        printf("Input non valido.\n Inserisci un numero: ");
+        printf(red "Input non valido.\nInserisci un numero: " reset);
     }
 }
 
@@ -28,12 +28,10 @@ int leggiIntero() {
 void pause() {
     printf("\nPremi INVIO per continuare...");
     fflush(stdout);
-
+    
     // pulisce eventuale newline rimasto nel buffer
     int c;
     while ((c = getchar()) != '\n' && c != EOF);
-
-    getchar();
 }
 
 // ================= TITLE =================

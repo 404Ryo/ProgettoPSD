@@ -18,10 +18,12 @@ Segnalazione* creaSegnalazione(char username[]) {
 
     strcpy(s->utente, username);
 
-    printf(cyan "Categoria (illuminazione/buche/rifiuti/impianti): " reset);
-    scanf("%49s", s->categoria);
+    int sceltaCategoria;
 
-    s->codice = generaCodice(s->categoria);
+    printf(cyan "Categoria:\n1) illuminazione\n2) buche\n3) rifiuti\n4) impianti\nScelta: " reset);
+    scanf("%d", &sceltaCategoria);
+
+    s->codice = generaCodice(sceltaCategoria, s->categoria);
 
     printf(cyan "Descrizione: " reset);
     scanf(" %[^\n]", s->descrizione);
@@ -111,12 +113,46 @@ Segnalazione* cercaPerCodice(Segnalazione* head, int codice) {
 }
 
 // ===================== CERCA CATEGORIA =====================
-void cercaPerCategoria(Segnalazione* head, char categoria[]) {
+void cercaPerCategoria(Segnalazione* head) {
+    int scelta;
+    char categoria[50];
     int trovato = 0;
 
+    printf("\n=== CERCA PER CATEGORIA ===\n");
+    printf("1. Illuminazione\n");
+    printf("2. Buche\n");
+    printf("3. Rifiuti\n");
+    printf("4. Impianti\n");
+    printf("Scelta: ");
+
+    scelta = leggiIntero();
+
+    switch (scelta) {
+        case 1:
+            strcpy(categoria, "illuminazione");
+            break;
+        case 2:
+            strcpy(categoria, "buche");
+            break;
+        case 3:
+            strcpy(categoria, "rifiuti");
+            break;
+        case 4:
+            strcpy(categoria, "impianti");
+            break;
+        default:
+            msgError("Scelta non valida");
+            return;
+    }
+
+    screenClear();
+    
     while (head) {
         if (strcmp(head->categoria, categoria) == 0) {
-            printf("Codice: %d | %s\n", head->codice, head->descrizione);
+            printf(cyan "\n---------------------\n" reset);
+            printf("Codice: %d\n", head->codice);
+            printf("Descrizione: %s\n", head->descrizione);
+            printf("Stato: %s\n", head->stato);
             trovato = 1;
         }
         head = head->next;
@@ -127,11 +163,43 @@ void cercaPerCategoria(Segnalazione* head, char categoria[]) {
 }
 
 // ===================== UPDATE STATO (ADMIN) =====================
-void aggiornaStato(Segnalazione* head, int codice, int isAdmin) {
+void aggiornaStato(Segnalazione* head, int isAdmin) {
     if (!isAdmin) {
         msgError("Solo admin può modificare lo stato");
         return;
     }
+
+    screenClear();
+
+    // ===== MOSTRA SEGNALAZIONI APERTE =====
+    Segnalazione* tmp = head;
+    int trovate = 0;
+
+    printf("\n=== SEGNALAZIONI APERTE ===\n");
+
+    while (tmp) {
+        if (strcmp(tmp->stato, "aperta") == 0) {
+
+            printf("\n---------------------\n");
+            printf("Codice: %d\n", tmp->codice);
+            printf("Tipologia: %s\n", tmp->categoria);
+            printf("Descrizione: %s\n", tmp->descrizione);
+            printf("Stato: %s\n", tmp->stato);
+
+            trovate = 1;
+        }
+        tmp = tmp->next;
+    }
+
+    if (!trovate) {
+        msgInfo("Nessuna segnalazione aperta");
+        return;
+    }
+
+    // ===== INPUT CODICE =====
+    int codice;
+    printf("\nInserisci codice da aggiornare: ");
+    codice = leggiIntero();   // usa la tua funzione sicura
 
     Segnalazione* s = cercaPerCodice(head, codice);
 
@@ -140,10 +208,37 @@ void aggiornaStato(Segnalazione* head, int codice, int isAdmin) {
         return;
     }
 
+    // ===== INPUT NUOVO STATO SICURO =====
     printf(cyan "Nuovo stato: " reset);
-    scanf(" %[^\n]", s->stato);
+    getchar(); // pulizia buffer
+    fgets(s->stato, sizeof(s->stato), stdin);
+    s->stato[strcspn(s->stato, "\n")] = 0;
 
     msgSuccess("Stato aggiornato");
+}
+
+// ===================== VISUALIZZA SEGNALAZIONI APERTE (ADMIN) =====================
+void stampaAperteAdmin(Segnalazione* head) {
+    int trovate = 0;
+
+    printf(cyan "\n=== SEGNALAZIONI APERTE ===\n" reset);
+
+    while (head) {
+        if (strcmp(head->stato, "aperta") == 0) {
+
+            printf(cyan "\n---------------------\n" reset);
+            printf(cyan "Codice: " purple "%d\n" reset, head->codice);
+            printf(cyan "Tipologia: "purple "%s\n" reset, head->categoria);
+            printf(cyan "Descrizione: "purple "%s\n" reset, head->descrizione);
+            printf(cyan "Stato: " purple "%s\n" reset, head->stato);
+
+            trovate = 1;
+        }
+        head = head->next;
+    }
+
+    if (!trovate)
+        msgInfo("Nessuna segnalazione aperta");
 }
 
 // ===================== STATO =====================
@@ -274,6 +369,12 @@ Segnalazione* caricaSegnalazioni() {
         token = strtok(NULL, "|\n");
         if (!token) { free(s); continue; }
         strncpy(s->stato, token, 19);
+
+        s->utente[strcspn(s->utente, "\r\n")] = 0;
+        s->categoria[strcspn(s->categoria, "\r\n")] = 0;
+        s->descrizione[strcspn(s->descrizione, "\r\n")] = 0;
+        s->data[strcspn(s->data, "\r\n")] = 0;
+        s->stato[strcspn(s->stato, "\r\n")] = 0;
 
         s->next = head;
         head = s;

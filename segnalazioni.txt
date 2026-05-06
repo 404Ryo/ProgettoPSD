@@ -1,2 +1,3 @@
-99999 Admin ill illuminazione scarsa 19/04/2026 19:10 10 aperta
-20000 Ryo buche Buca via ss 29/04/2026 15:44 4 aperta
+10000|Admin|illuminazione|Illuminazione assente|02/05/2026 16:42|10|aperta
+20000|Admin|buche|ad|02/05/2026 16:42|1|aperta
+10000|Admin|illuminazione|aa|06/05/2026 11:32|10|aperta
