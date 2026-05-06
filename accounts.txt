@@ -1,2 +1,2 @@
-Ryo aa 0
-Admin admin 1
+admin a 1
+user u 0

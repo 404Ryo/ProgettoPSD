@@ -2,9 +2,18 @@
 #include <stdlib.h>
 #include <string.h>
 #include "account.h"
+#include <ctype.h>
 #include "utils.h"
 
 #define FILE_UTENTI "accounts.txt"
+
+
+// ===================== TO LOWER =====================
+void toLowerCase(char *str) {
+    for (int i = 0; str[i]; i++) {
+        str[i] = tolower(str[i]);
+    }
+}
 
 // ===================== CHECK USER =====================
 int userExists(char username[]) {
@@ -45,6 +54,8 @@ void signin() {
         printf("Username: ");
         scanf("%49s", a.username);
 
+        toLowerCase(a.username);
+
         if (userExists(a.username))
             msgError("Username già esistente");
 
@@ -81,6 +92,8 @@ int login(char username[], int *isAdmin) {
 
     printf("Username: ");
     scanf("%49s", user);
+
+    toLowerCase(user);
 
     printf("Password: ");
     scanf("%49s", pass);

@@ -1,3 +1,1 @@
-10000|Admin|illuminazione|Illuminazione assente|02/05/2026 16:42|10|aperta
-20000|Admin|buche|ad|02/05/2026 16:42|1|aperta
-10000|Admin|illuminazione|aa|06/05/2026 11:32|10|aperta
+1001|user|illuminazione|as|06/05/2026 11:46|5|chiusa

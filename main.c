@@ -102,9 +102,7 @@ int main() {
 
             case 8:
                 if (isAdmin) {
-                    printf("Codice: ");
-                    codice = leggiIntero();
-                    lista = eliminaSegnalazione(lista, codice, isAdmin);
+                    lista = eliminaSegnalazione(lista, isAdmin);
                 }
                 break;
 

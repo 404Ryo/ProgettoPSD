@@ -29,7 +29,7 @@ void cercaPerCategoria(Segnalazione* head);
 // ================= ADMIN =================
 void aggiornaStato(Segnalazione* head, int isAdmin);
 void stampaAperteAdmin(Segnalazione* head);
-Segnalazione* eliminaSegnalazione(Segnalazione* head, int codice, int isAdmin);
+Segnalazione* eliminaSegnalazione(Segnalazione* head, int isAdmin);
 
 // ================= REPORT =================
 void generaReport(Segnalazione* head);

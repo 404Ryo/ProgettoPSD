@@ -1,14 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
+
 #include "utils.h"
 #include "colors.h"
+#include "segnalazione.h"
 
 // ================= SCREEN =================
 void screenClear() {
     printf("\033[2J\033[H");
 }
 
-// ================= INPUT SICURO =================
+// ================= INPUT INTERO SICURO =================
 int leggiIntero() {
     char buffer[100];
     int valore;
@@ -28,10 +30,12 @@ int leggiIntero() {
 void pause() {
     printf("\nPremi INVIO per continuare...");
     fflush(stdout);
-    
-    // pulisce eventuale newline rimasto nel buffer
+
     int c;
-    while ((c = getchar()) != '\n' && c != EOF);
+    c = getchar();
+    if (c != '\n' && c != EOF) {
+        while ((c = getchar()) != '\n' && c != EOF);
+    }
 }
 
 // ================= TITLE =================
@@ -85,4 +89,29 @@ void msgError(const char* testo) {
 
 void msgInfo(const char* testo) {
     printf(cyan "[INFO] %s\n" reset, testo);
+}
+
+// ================= SALVA FILE =================
+void salvaTutto(Segnalazione* head) {
+    FILE* f = fopen("segnalazioni.txt", "w"); // <-- sovrascrive tutto
+    if (!f) {
+        msgError("Errore salvataggio file");
+        return;
+    }
+
+    while (head) {
+        fprintf(f, "%d|%s|%s|%s|%s|%d|%s\n",
+            head->codice,
+            head->utente,
+            head->categoria,
+            head->descrizione,
+            head->data,
+            head->urgenza,
+            head->stato
+        );
+
+        head = head->next;
+    }
+
+    fclose(f);
 }

@@ -2,10 +2,10 @@
 #include "codice.h"
 
 int generaCodice(int sceltaCategoria, char categoria[]) {
-    static int counter10 = 10000;
-    static int counter20 = 20000;
-    static int counter30 = 30000;
-    static int counter40 = 40000;
+    static int counter10 = 1000;
+    static int counter20 = 2000;
+    static int counter30 = 3000;
+    static int counter40 = 4000;
 
     switch (sceltaCategoria) {
 

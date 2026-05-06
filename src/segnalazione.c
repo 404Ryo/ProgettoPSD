@@ -87,7 +87,7 @@ void statoSegnalazioneUtente(Segnalazione* head, char username[]) {
     int codice;
 
     printf("Codice: ");
-    scanf("%d", &codice);
+    codice = leggiIntero();
 
     while (head) {
         if (head->codice == codice &&
@@ -171,20 +171,21 @@ void aggiornaStato(Segnalazione* head, int isAdmin) {
 
     screenClear();
 
-    // ===== MOSTRA SEGNALAZIONI APERTE =====
     Segnalazione* tmp = head;
     int trovate = 0;
 
-    printf("\n=== SEGNALAZIONI APERTE ===\n");
+    printf(cyan "\n====================================\n" reset);
+    printf(cyan "        SEGNALAZIONI APERTE\n" reset);
+    printf(cyan "====================================\n" reset);
 
     while (tmp) {
-        if (strcmp(tmp->stato, "aperta") == 0) {
+        if (strcmp(tmp->stato, "aperta") == 0 || strcmp(tmp->stato, "in lavorazione") == 0) {
 
             printf("\n---------------------\n");
-            printf("Codice: %d\n", tmp->codice);
-            printf("Tipologia: %s\n", tmp->categoria);
-            printf("Descrizione: %s\n", tmp->descrizione);
-            printf("Stato: %s\n", tmp->stato);
+            printf(cyan "Codice: " reset purple "%d\n" reset, tmp->codice);
+            printf(cyan "Tipologia:" reset yellow" %s\n" reset, tmp->categoria);
+            printf(cyan "Descrizione: %s\n" reset, tmp->descrizione);
+            printf(cyan "Stato: %s\n" reset, tmp->stato);
 
             trovate = 1;
         }
@@ -196,10 +197,9 @@ void aggiornaStato(Segnalazione* head, int isAdmin) {
         return;
     }
 
-    // ===== INPUT CODICE =====
     int codice;
     printf("\nInserisci codice da aggiornare: ");
-    codice = leggiIntero();   // usa la tua funzione sicura
+    codice = leggiIntero();
 
     Segnalazione* s = cercaPerCodice(head, codice);
 
@@ -208,13 +208,38 @@ void aggiornaStato(Segnalazione* head, int isAdmin) {
         return;
     }
 
-    // ===== INPUT NUOVO STATO SICURO =====
-    printf(cyan "Nuovo stato: " reset);
-    getchar(); // pulizia buffer
-    fgets(s->stato, sizeof(s->stato), stdin);
-    s->stato[strcspn(s->stato, "\n")] = 0;
+    // ===== SCELTA STATO SICURA =====
+    screenClear();
+    printf(cyan "\n====================================\n" reset);
+    printf(cyan "        AGGIORNA STATO\n" reset);
+    printf(cyan "====================================\n" reset);
 
-    msgSuccess("Stato aggiornato");
+    printf(cyan "\nNuovo stato:\n" reset);
+    printf(green "1. aperta\n" reset);
+    printf(yellow "2. in lavorazione\n" reset);
+    printf(red "3. chiusa\n" reset);
+    printf(cyan "Scelta: " reset);
+
+    int scelta = leggiIntero();
+
+    switch (scelta) {
+        case 1:
+            strcpy(s->stato, "aperta");
+            break;
+        case 2:
+            strcpy(s->stato, "in lavorazione");
+            break;
+        case 3:
+            strcpy(s->stato, "chiusa");
+            break;
+        default:
+            msgError("Scelta non valida");
+            return;
+    }
+    free(tmp);
+    salvaTutto(head);
+
+    msgSuccess("Stato aggiornato e salvato");
 }
 
 // ===================== VISUALIZZA SEGNALAZIONI APERTE (ADMIN) =====================
@@ -268,32 +293,70 @@ void stampaUrgenti(Segnalazione* head) {
 }
 
 // ===================== DELETE =====================
-Segnalazione* eliminaSegnalazione(Segnalazione* head, int codice, int isAdmin) {
+Segnalazione* eliminaSegnalazione(Segnalazione* head, int isAdmin) {
     if (!isAdmin) {
         msgError("Solo admin può eliminare");
         return head;
     }
 
-    Segnalazione *tmp = head, *prev = NULL;
+    // ===== MOSTRA SOLO SEGNALAZIONI CHIUSE =====
+    Segnalazione* tmp = head;
+    int trovate = 0;
 
-    while (tmp && tmp->codice != codice) {
-        prev = tmp;
+    printf(cyan "\n====================================\n" reset);
+    printf(cyan "        SEGNALAZIONI ELIMINABILI\n" reset);
+    printf(cyan "====================================\n" reset);
+
+    while (tmp) {
+        if (strcmp(tmp->stato, "chiusa") == 0) {
+            printf("Codice: %d\n", tmp->codice);
+            printf("Categoria: %s\n", tmp->categoria);
+            printf("Descrizione: %s\n", tmp->descrizione);
+            printf("Stato: %s\n", tmp->stato);
+            trovate = 1;
+        }
         tmp = tmp->next;
     }
 
-    if (!tmp) {
+    if (!trovate) {
+        msgInfo("Nessuna segnalazione eliminabile");
+        return head;
+    }
+
+    // ===== INPUT CODICE =====
+    printf(cyan "\nInserisci codice da eliminare: " reset);
+    int codice = leggiIntero();
+
+    // ===== RICERCA =====
+    Segnalazione *cur = head, *prev = NULL;
+
+    while (cur && cur->codice != codice) {
+        prev = cur;
+        cur = cur->next;
+    }
+
+    if (!cur) {
         msgError("Non trovata");
         return head;
     }
 
+    // opzionale: sicurezza extra
+    if (strcmp(cur->stato, "chiusa") != 0) {
+        msgError("Puoi eliminare solo segnalazioni chiuse");
+        return head;
+    }
+
+    // ===== ELIMINAZIONE =====
     if (!prev)
-        head = tmp->next;
+        head = cur->next;
     else
-        prev->next = tmp->next;
+        prev->next = cur->next;
 
-    free(tmp);
+    free(cur);
 
-    msgSuccess("Eliminata");
+    salvaTutto(head);
+
+    msgSuccess("Eliminata con successo");
     return head;
 }
 
