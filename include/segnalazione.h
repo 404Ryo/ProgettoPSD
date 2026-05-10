@@ -2,7 +2,8 @@
 #define SEGNALAZIONE_H
 
 typedef struct Segnalazione {
-    int codice;
+    int codice;              // SOLO numerico per ricerca
+    char codiceCompleto[50]; // XXX-20260101-1234
     char utente[50];
     char categoria[50];
     char descrizione[150];
@@ -39,8 +40,6 @@ void generaReport(Segnalazione* head);
 void salvaSegnalazione(Segnalazione* s);
 Segnalazione* caricaSegnalazioni();
 
-// ================= BONUS (UTILITÀ FUTURA) =================
-// utile per evitare crash da memory leak
 void liberaLista(Segnalazione* head);
 
 #endif

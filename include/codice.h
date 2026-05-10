@@ -1,6 +1,6 @@
 #ifndef CODICE_H
 #define CODICE_H
 
-int generaCodice(int sceltaCategoria, char categoria[]);
+void generaCodice(int sceltaCategoria, char categoria[], char outputCodice[], int* idNumerico);
 
 #endif

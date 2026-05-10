@@ -1,7 +1,6 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-
 typedef struct Segnalazione Segnalazione;
 
 // input sicuro

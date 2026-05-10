@@ -1,32 +1,69 @@
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include "codice.h"
 
-int generaCodice(int sceltaCategoria, char categoria[]) {
-    static int counter10 = 1000;
-    static int counter20 = 2000;
-    static int counter30 = 3000;
-    static int counter40 = 4000;
+// ===================== ASSEGNA CATEGORIA =====================
+static void assegnaCategoria(int scelta, char categoria[], char prefix[]) {
 
-    switch (sceltaCategoria) {
+    switch (scelta) {
 
         case 1:
             strcpy(categoria, "illuminazione");
-            return counter10++;
+            strcpy(prefix, "LMN");
+            break;
 
         case 2:
             strcpy(categoria, "buche");
-            return counter20++;
+            strcpy(prefix, "BCH");
+            break;
 
         case 3:
             strcpy(categoria, "rifiuti");
-            return counter30++;
+            strcpy(prefix, "RFT");
+            break;
 
         case 4:
             strcpy(categoria, "impianti");
-            return counter40++;
+            strcpy(prefix, "MPN");
+            break;
 
         default:
             strcpy(categoria, "sconosciuta");
-            return 99999;
+            strcpy(prefix, "UNK");
+            break;
     }
+}
+
+// ===================== GENERA CODICE =====================
+void generaCodice(int sceltaCategoria,
+                  char categoria[],
+                  char outputCodice[],
+                  int* idNumerico) {
+
+    static int seedInizializzato = 0;
+    if (!seedInizializzato) {
+        srand((unsigned)time(NULL));
+        seedInizializzato = 1;
+    }
+
+    char prefix[10];
+
+    assegnaCategoria(sceltaCategoria, categoria, prefix);
+
+    // data
+    time_t t = time(NULL);
+    struct tm* tm_info = localtime(&t);
+
+    char data[20];
+    strftime(data, sizeof(data), "%Y%m%d", tm_info);
+
+    // random più stabile
+    int random = rand() % 10000 + 1;
+
+    *idNumerico = random;
+
+    // codice finale
+    sprintf(outputCodice, "%s-%s-%04d", prefix, data, random);
 }
