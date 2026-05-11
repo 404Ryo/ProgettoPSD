@@ -55,8 +55,8 @@ void signin() {
 
     // username unico
     do {
-        printf("Username: ");
-        scanf("%49s", a.username);
+        printf("Username _> ");
+        leggiStringa(a.username, sizeof(a.username));
 
         toLowerCase(a.username);
 
@@ -65,8 +65,8 @@ void signin() {
 
     } while (userExists(a.username));
 
-    printf("Password: ");
-    scanf("%49s", a.password);
+    printf("Password -> ");
+    leggiStringa(a.password, sizeof(a.password));
 
     a.isAdmin = 0;
 
@@ -77,7 +77,7 @@ void signin() {
 
     fclose(fp);
 
-    msgSuccess("Registrazione completata");
+    msgSuccess(cyan "Registrazione completata" reset);
 }
 
 // ===================== LOGIN =====================
@@ -96,13 +96,13 @@ int login(char username[], int *isAdmin) {
     printf(cyan "        LOGIN\n" reset);
     printf(cyan "====================================\n" reset);
 
-    printf(cyan "Username: " reset);
-    scanf("%49s", user);
+    printf(cyan "Username -> " reset);
+    leggiStringa(user, sizeof(user));
 
     toLowerCase(user);
 
-    printf("Password: ");
-    scanf("%49s", pass);
+    printf(cyan "Password -> " reset);
+    leggiStringa(pass, sizeof(pass));
 
     while (fscanf(fp, "%49s %49s %d",
         temp.username,
@@ -122,11 +122,13 @@ int login(char username[], int *isAdmin) {
             else
                 msgSuccess("Login USER riuscito");
 
+            pause();
             return 1;
         }
     }
 
     fclose(fp);
-    msgError("Credenziali errate");
+    msgError("Username o Password errati");
+    pause();
     return 0;
 }

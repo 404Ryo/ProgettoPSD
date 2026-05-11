@@ -7,7 +7,7 @@ SRC = main.c \
       src/segnalazione.c \
       src/utils.c
 
-OBJ = $(SRC:.c=.o)
+OBJ = $(SRC:%.c=build/%.o)
 
 TARGET = a
 
@@ -16,8 +16,9 @@ all: $(TARGET)
 $(TARGET): $(OBJ)
 	$(CC) $(OBJ) -o $(TARGET)
 
-%.o: %.c
+build/%.o: %.c
+	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OBJ) $(TARGET)
+	rm -rf build $(TARGET)

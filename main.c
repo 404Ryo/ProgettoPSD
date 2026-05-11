@@ -7,12 +7,6 @@
 #include "utils.h"
 #include "colors.h"
 
-// input string sicuro
-void leggiStringa(char *buffer, int size) {
-    fgets(buffer, size, stdin);
-    buffer[strcspn(buffer, "\n")] = 0;
-}
-
 int main() {
 
     int scelta;
@@ -25,13 +19,15 @@ int main() {
     do {
         screenClear();
 
-        printf(cyan "====================================\n" reset);
-        printf(cyan "        ACCESSO\n" reset);
-        printf(cyan "====================================\n" reset);
-        printf(blue "1. Login\n" reset);
-        printf(blue "2. Registrati\n" reset);
+        printf(cyan  "========================================\n" reset);
+        printf(cyan  "         SISTEMA DI ACCESSO\n" reset);
+        printf(cyan  "========================================\n" reset);
 
-        printf("Scelta: ");
+        printf(green  "[1] Login\n" reset);
+        printf(blue   "[2] Registrati\n" reset);
+
+        printf(cyan "\nScelta -> " reset);
+
         scelta = leggiIntero();
 
         screenClear();
@@ -40,98 +36,94 @@ int main() {
             signin();
             pause();
         }
-
     } while (scelta != 1 || !login(username, &isAdmin));
+
 
     Segnalazione* lista = caricaSegnalazioni();
 
     // LISTA VUOTA
     if (!lista) msgInfo("Lista vuota");
 
-    int codice;
-    char stato[50];
-
-    getchar();
     // LOOP
-    do {
-        screenClear();
+    while(1) {
 
         if (isAdmin) menuAdmin();
         else menuUser();
 
         scelta = leggiIntero();
 
-        switch (scelta) {
-
-            case 1:
-                screenClear();
-                lista = aggiungiSegnalazione(lista, username);
-                break;
-
-            case 2:
-                stampaSegnalazioni(lista, username, isAdmin);
-                break;
-
-            case 3:
-                
-                printf("Codice: ");
-                codice = leggiIntero();
-
-                screenClear();
-
-                Segnalazione* s = cercaPerCodice(lista, codice);
-
-                if (s) {
-                    msgSuccess("Trovata\n");
-                    stampaSegnalazione(s);
-                } else {
-                    msgError("Non trovata");
-                }
-                break;
-
-            case 4:
-                if (!isAdmin)
-                    statoSegnalazioneUtente(lista, username);
-                else {
-                    screenClear();
-                    cercaPerCategoria(lista);
-                }
-                break;
-
-            case 5:
-                if (isAdmin) {
-                    aggiornaStato(lista, isAdmin);
-                }
-                break;
-
-            case 6:
-                if (isAdmin) {
-                    printf("Stato: ");
-                    leggiStringa(stato, 50);
-                    stampaPerStato(lista, stato);
-                }
-                break;
-
-            case 7:
-                screenClear();
-                stampaUrgenti(lista);
-                break;
-
-            case 8:
-                if (isAdmin) {
-                    lista = eliminaSegnalazione(lista, isAdmin);
-                }
-                break;
-
-            case 9:
-                if (isAdmin)
-                    generaReport(lista);
-                break;
+        if (scelta == 0) {
+            return 0;
         }
+        else{
+            switch (scelta) {
 
-        pause();
+                case 1:
+                    screenClear();
+                    lista = aggiungiSegnalazione(lista, username);
+                    break;
 
-    } while (scelta != 0);
+                case 2:
+                    screenClear();
+                    stampaSegnalazioni(lista, username, isAdmin);
+                    break;
+
+                case 3:
+                    screenClear();
+                    ricercaPerCodice(lista);
+                    break;
+
+                case 4:
+                    if (!isAdmin)
+                        aggiornaStato(lista, isAdmin);
+                    else {
+                        screenClear();
+                        cercaPerCategoria(lista);
+                    }
+                    break;
+
+                case 5:
+                    if (isAdmin) {
+                        statoSegnalazioneUtente(lista, username);
+                        
+                    }
+                    break;
+
+                case 6:
+                    if (isAdmin) {
+
+                        screenClear();
+
+                        char* stato = ricercaPerStato();
+
+                        stampaPerStato(lista, stato);
+                    }
+                    break;
+
+                case 7:
+                    if(isAdmin){
+                        screenClear();
+                        stampaUrgenti(lista);
+                    }
+                    break;
+
+                case 8:
+                    if (isAdmin) {
+                        lista = eliminaSegnalazione(lista, isAdmin);
+                    }
+                    break;
+
+                case 9:
+                    if (isAdmin)
+                        generaReport(lista);
+                    break;
+                default:
+                    msgError("Scelta non valida. Riprova");
+            }
+
+            pause();
+        }
+    }
 
     return 0;
 }

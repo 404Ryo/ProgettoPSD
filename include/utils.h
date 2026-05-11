@@ -3,8 +3,9 @@
 
 typedef struct Segnalazione Segnalazione;
 
-// input sicuro
+// INPUT SICURO
 int leggiIntero();
+void leggiStringa(char* buffer, int size);
 
 // UI
 void screenClear();
@@ -13,12 +14,16 @@ void title();
 void menuUser();
 void menuAdmin();
 
-// messaggi
+// RICERCA
+char* ricercaPerStato();
+void ricercaPerCodice(Segnalazione* lista);
+
+// MESSAGGI
 void msgSuccess(const char* testo);
 void msgError(const char* testo);
 void msgInfo(const char* testo);
 
-// File
+// SALVA FILE
 void salvaTutto(Segnalazione* head);
 
 #endif
