@@ -204,7 +204,7 @@ void msgInfo(const char* testo) {
 
 // ================= SALVA FILE =================
 void salvaTutto(Segnalazione* head) {
-    FILE* f = fopen("segnalazioni.txt", "w");
+    FILE* f = fopen("file/segnalazioni.txt", "w");
     if (!f) {
         msgError("Errore salvataggio file");
         return;

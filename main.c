@@ -74,18 +74,18 @@ int main() {
                     break;
 
                 case 4:
-                    if (!isAdmin)
+                    if (isAdmin) {
                         aggiornaStato(lista, isAdmin);
+                    }
                     else {
-                        screenClear();
-                        cercaPerCategoria(lista);
+                        statoSegnalazioneUtente(lista, username);
                     }
                     break;
 
                 case 5:
                     if (isAdmin) {
-                        statoSegnalazioneUtente(lista, username);
-                        
+                        screenClear();
+                        cercaPerCategoria(lista);
                     }
                     break;
 
@@ -114,8 +114,10 @@ int main() {
                     break;
 
                 case 9:
-                    if (isAdmin)
+                    if (isAdmin) {
+                        screenClear();
                         generaReport(lista);
+                    }
                     break;
                 default:
                     msgError("Scelta non valida. Riprova");

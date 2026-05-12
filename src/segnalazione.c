@@ -21,7 +21,7 @@ Segnalazione* creaSegnalazione(char username[]) {
 
     int sceltaCategoria;
 
-    printf(cyan  "\n====================================\n" reset);
+    printf(cyan  "====================================\n" reset);
     printf(cyan  "       SELEZIONA CATEGORIA\n" reset);
     printf(cyan  "====================================\n" reset);
 
@@ -43,8 +43,6 @@ Segnalazione* creaSegnalazione(char username[]) {
 
     // codice numerico SOLO per ricerca
     generaCodice(sceltaCategoria, s->categoria, s->codiceCompleto, &s->codice);
-
-    screenClear();
 
     printf(cyan "Descrizione -> " reset);
     leggiStringa(s->descrizione, sizeof(s->descrizione));
@@ -173,7 +171,7 @@ void cercaPerCategoria(Segnalazione* head) {
     char cat[50];
     int trovate = 0;
 
-    printf(cyan "\n====================================\n" reset);
+    printf(cyan "====================================\n" reset);
     printf(cyan "        SELEZIONA CATEGORIA\n" reset);
     printf(cyan "====================================\n" reset);
 
@@ -275,19 +273,21 @@ void aggiornaStato(Segnalazione* head, int isAdmin) {
     // ================= APERTA =================
     if (strcmp(s->stato, "aperta") == 0) {
 
-        printf(cyan "\n====================================\n" reset);
+        printf(cyan "====================================\n" reset);
         printf(cyan "         CAMBIA STATO\n" reset);
         printf(cyan "====================================\n" reset);
 
         printf(yellow "[1] In lavorazione\n" reset);
         printf(red    "[2] Chiuso\n" reset);
+        printf(blue "[0] Annulla\n" reset);
 
         printf(cyan "\nScelta -> " reset);
 
         int scelta = leggiIntero();
 
         switch (scelta) {
-
+            case 0:
+                break;
             case 1:
                 strcpy(s->stato, "in lavorazione");
                 break;
@@ -305,11 +305,12 @@ void aggiornaStato(Segnalazione* head, int isAdmin) {
     // ================= IN LAVORAZIONE =================
     else if (strcmp(s->stato, "in lavorazione") == 0) {
 
-        printf(cyan "\n====================================\n" reset);
+        printf(cyan "====================================\n" reset);
         printf(cyan "     SEGNALAZIONE IN LAVORAZIONE\n" reset);
         printf(cyan "====================================\n" reset);
 
         printf(red "[1] Chiudi segnalazione\n" reset);
+        printf(blue "[0] Annulla\n" reset);
 
         printf(cyan "\nScelta -> " reset);
 
@@ -317,6 +318,9 @@ void aggiornaStato(Segnalazione* head, int isAdmin) {
 
         if (scelta == 1) {
             strcpy(s->stato, "chiuso");
+        } else if (scelta == 0) {
+            return;
+            ungetc('\n', stdin);
         } else {
             msgError("Scelta non valida");
             return;
@@ -339,24 +343,23 @@ void aggiornaStato(Segnalazione* head, int isAdmin) {
 void stampaAperteAdmin(Segnalazione* head) {
     int trovate = 0;
 
-    printf(cyan "\n====================================\n" reset);
-    printf(cyan "        SEGNALAZIONI\n" reset);
-    printf(cyan "====================================\n" reset);
+    printf(blue "====================================\n" reset);
+    printf(blue "        SEGNALAZIONI\n" reset);
+    printf(blue "====================================\n" reset);
 
     while (head) {
         if (strcmp(head->stato, "aperta") == 0 || strcmp(head->stato, "in lavorazione") == 0) {
 
-            printf(cyan "\n---------------------\n" reset);
             printf(cyan "Codice: " purple "%d\n" reset, head->codice);
             printf(cyan "Tipologia: " yellow "%s\n" reset, head->categoria);
             printf(cyan "Descrizione: %s\n" reset, head->descrizione);
             
             // COLORAZIONE SCRITTA STATO
             if (strcmp(head->stato, "aperta") == 0)
-                printf(cyan "\tStato: " green "%s\n" reset, head->stato);
+                printf(cyan "Stato: " green "%s\n" reset, head->stato);
             else
-                printf(cyan "\tStato: " yellow "%s\n" reset, head->stato);
-
+                printf(cyan "Stato: " yellow "%s\n" reset, head->stato);
+            printf(cyan "---------------------\n" reset);
             trovate = 1;
         }
         head = head->next;
@@ -415,7 +418,7 @@ void stampaUrgenti(Segnalazione* head) {
         return;
     }
 
-    printf(red "\n====================================\n" reset);
+    printf(red "====================================\n" reset);
     printf(red "        SEGNALAZIONI URGENTI\n" reset);
     printf(red "====================================\n" reset);
 
@@ -444,7 +447,7 @@ void stampaUrgenti(Segnalazione* head) {
     }
 
     // ================= MENO URGENTI =================
-    printf(blue "\n====================================\n" reset);
+    printf(blue "====================================\n" reset);
     printf(blue "        MENO URGENTI\n" reset);
     printf(blue "====================================\n" reset);
 
@@ -560,25 +563,101 @@ Segnalazione* eliminaSegnalazione(Segnalazione* head, int isAdmin) {
 // ===================== REPORT =====================
 void generaReport(Segnalazione* head) {
 
-    int tot = 0, aperte = 0, chiuse = 0;
+    int totale = 0;
+    int aperte = 0;
+    int chiuse = 0;
+    int inlav = 0;
 
-    while (head) {
+    int illuminazione = 0;
+    int buche = 0;
+    int rifiuti = 0;
+    int impianti = 0;
 
-        tot++;
+    Segnalazione* tmp = head;
 
-        if (strcmp(head->stato, "aperta") == 0) aperte++;
-        if (strcmp(head->stato, "chiuso") == 0) chiuse++;
+    while (tmp) {
 
-        head = head->next;
+        totale++;
+
+        // Stato
+        if (strcmp(tmp->stato, "aperta") == 0) {
+            aperte++;
+        }
+        else if (strcmp(tmp->stato, "chiusa") == 0) {
+            chiuse++;
+        }
+        else if (strcmp(tmp->stato, "in lavorazione") == 0) {
+            inlav++;
+        }
+
+
+        // Categoria
+        if (strcmp(tmp->categoria, "illuminazione") == 0)
+            illuminazione++;
+
+        else if (strcmp(tmp->categoria, "buche") == 0)
+            buche++;
+
+        else if (strcmp(tmp->categoria, "rifiuti") == 0)
+            rifiuti++;
+
+        else if (strcmp(tmp->categoria, "impianti") == 0)
+            impianti++;
+
+        tmp = tmp->next;
     }
 
-    printf("Tot:%d Aperte:%d Chiuse:%d\n", tot, aperte, chiuse);
+    // Più Frequente
+    int max = illuminazione;
+    char frequente[50] = "illuminazione";
+
+    if (buche > max) {
+        max = buche;
+        strcpy(frequente, "buche");
+    }
+
+    if (rifiuti > max) {
+        max = rifiuti;
+        strcpy(frequente, "rifiuti");
+    }
+
+    if (impianti > max) {
+        max = impianti;
+        strcpy(frequente, "impianti");
+    }
+
+    // Stampa
+    printf(cyan "====================================\n" reset);
+    printf(cyan "           REPORT FINALE\n" reset);
+    printf(cyan "====================================\n\n" reset);
+
+    printf(yellow "Totale segnalazioni: %d\n\n" reset, totale);
+
+    printf(green "Segnalazioni aperte: %d\n" reset, aperte);
+    printf(yellow   "Segnalazioni in corso: %d\n" reset, inlav);
+    printf(red   "Segnalazioni chiuse: %d\n\n" reset, chiuse);
+    
+
+    printf(cyan "====================================\n" reset);
+    printf(cyan "      SEGNALAZIONI PER CATEGORIA\n" reset);
+    printf(cyan "====================================\n\n" reset);
+
+    printf(yellow "Illuminazione: %d\n" reset, illuminazione);
+    printf(yellow "Buche: %d\n" reset, buche);
+    printf(yellow "Rifiuti: %d\n" reset, rifiuti);
+    printf(yellow "Impianti: %d\n\n" reset, impianti);
+
+    printf(cyan "====================================\n" reset);
+    printf(cyan "       TIPOLOGIA PIU' FREQUENTE\n" reset);
+    printf(cyan "====================================\n\n" reset);
+
+    printf(green "%s (%d segnalazioni)\n" reset, frequente, max);
 }
 
 // ===================== SALVA =====================
 void salvaSegnalazione(Segnalazione* s) {
 
-    FILE* f = fopen("segnalazioni.txt", "a");
+    FILE* f = fopen("file/segnalazioni.txt", "a");
     if (!f) return;
 
     fprintf(f, "%d|%s|%s|%s|%s|%s|%d|%s\n",
@@ -598,7 +677,7 @@ void salvaSegnalazione(Segnalazione* s) {
 // ===================== CARICA =====================
 Segnalazione* caricaSegnalazioni() {
 
-    FILE* f = fopen("segnalazioni.txt", "r");
+    FILE* f = fopen("file/segnalazioni.txt", "r");
     if (!f) return NULL;
 
     Segnalazione* head = NULL;

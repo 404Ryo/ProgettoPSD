@@ -7,7 +7,7 @@
 #include "colors.h" 
 #include "utils.h"
 
-#define FILE_UTENTI "accounts.txt"
+#define FILE_UTENTI "file/accounts.txt"
 
 
 // ===================== TO LOWER =====================
@@ -55,7 +55,7 @@ void signin() {
 
     // username unico
     do {
-        printf("Username _> ");
+        printf("Username ->" reset);
         leggiStringa(a.username, sizeof(a.username));
 
         toLowerCase(a.username);
@@ -120,7 +120,7 @@ int login(char username[], int *isAdmin) {
             if (*isAdmin)
                 msgSuccess("Login ADMIN riuscito");
             else
-                msgSuccess("Login USER riuscito");
+                msgSuccess("Login UTENTE riuscito");
 
             pause();
             return 1;
