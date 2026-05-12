@@ -9,7 +9,7 @@ SRC = main.c \
 
 OBJ = $(SRC:%.c=build/%.o)
 
-TARGET = a
+TARGET = progettoPSD
 
 all: $(TARGET)
 
