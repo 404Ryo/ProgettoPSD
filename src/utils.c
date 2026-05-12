@@ -6,7 +6,16 @@
 #include "colors.h"
 #include "segnalazione.h"
 
-// ================= SCREEN =================
+/*
+    Pulisce lo schermo della console.
+
+    La funzione utilizza un comando di sistema diverso in base al sistema operativo:
+    - su Windows (_WIN32) esegue "cls"
+    - su sistemi Unix/Linux/macOS esegue "clear"
+
+    Questo permette di mantenere il programma portabile tra ambienti diversi
+    senza modificare il codice principale.
+*/
 void screenClear() {
 #ifdef _WIN32
     system("cls");
@@ -15,7 +24,16 @@ void screenClear() {
 #endif
 }
 
-// ================= INPUT CHAR SICURO =================
+/*
+    Legge una stringa da input standard in modo sicuro.
+
+    La funzione utilizza fgets per evitare overflow del buffer e gestisce:
+    - input troppo lungo (svuota il buffer residuo e richiede reinserimento)
+    - input vuoto (stringa vuota non valida)
+    - rimozione automatica del carattere newline finale
+
+    Il ciclo continua finché l’utente non inserisce una stringa valida.
+*/
 void leggiStringa(char* buffer, int size) {
 
     while (1) {
@@ -44,7 +62,15 @@ void leggiStringa(char* buffer, int size) {
     }
 }
 
-// ================= INPUT INTERO SICURO =================
+/*
+    Legge un intero da input standard in modo sicuro.
+
+    La funzione utilizza un buffer temporaneo e fgets per evitare problemi di overflow.
+    L’input viene poi validato tramite sscanf per verificare che sia un numero intero valido.
+
+    Se l’input non è valido, viene mostrato un messaggio di errore e richiesto nuovamente
+    l’inserimento. Il ciclo continua finché non viene inserito un valore corretto.
+*/
 int leggiIntero() {
     char buffer[100];
     int valore;
@@ -61,7 +87,17 @@ int leggiIntero() {
     }
 }
 
-// ================= PAUSA SICURA =================
+/*
+    Mette in pausa l’esecuzione del programma fino alla pressione di INVIO.
+
+    La funzione:
+    - mostra un messaggio all’utente
+    - attende l’input da tastiera
+    - gestisce eventuali caratteri residui nel buffer di input
+    - pulisce lo schermo prima di riprendere l’esecuzione
+
+    Serve per permettere all’utente di leggere l’output prima del refresh della schermata.
+*/
 void pause() {
     printf("\nPremi INVIO per continuare...");
     fflush(stdout);
@@ -115,7 +151,21 @@ void menuAdmin() {
     printf("\nScelta -> ");
 }
 
-// ================= RICERCA PER STATO =================
+/*
+    Permette di selezionare uno stato di una segnalazione tramite menu.
+
+    La funzione mostra un elenco di stati disponibili e richiede all’utente
+    di inserire una scelta valida.
+
+    Comportamento:
+    - Se l’utente inserisce 0, la funzione ritorna "EXIT" per annullare l’operazione.
+    - Se la scelta è valida (1–3), viene restituita una stringa corrispondente allo stato:
+        1 -> "aperta"
+        2 -> "in lavorazione"
+        3 -> "chiuso"
+    - In caso di input non valido, viene mostrato un messaggio di errore e la richiesta 
+    viene ripetuta.
+*/
 char* ricercaPerStato() {
     int scelta;
 
@@ -155,7 +205,17 @@ char* ricercaPerStato() {
     return NULL;
 }
 
-// ================= RICERCA PER CODICE =================
+/*
+    Ricerca una segnalazione tramite codice identificativo.
+
+    La funzione richiede all’utente l’inserimento di un codice numerico e ne valida l’input.
+    Se il codice non è valido (<= 0), viene mostrato un messaggio di errore e la funzione termina.
+
+    Se il codice è valido:
+    - viene cercata la segnalazione nella lista
+    - se non trovata, viene mostrato un messaggio di errore
+    - se trovata, viene mostrato un messaggio di successo e stampati i dettagli
+*/
 void ricercaPerCodice(Segnalazione* lista) {
 
     printf(cyan "\n====================================\n" reset);

@@ -15,7 +15,23 @@ int main() {
 
     screenClear();
 
-    // SAFE LOGIN
+/*
+    Loop principale del sistema di autenticazione.
+
+    Mostra un menu iniziale che permette all’utente di:
+    - effettuare il login
+    - registrarsi a un nuovo account
+
+    Il ciclo continua finché:
+    - l’utente non seleziona il login (scelta == 1)
+    - e le credenziali inserite risultano valide (login() restituisce successo)
+
+    Se l’utente sceglie la registrazione (opzione 2), viene eseguita la funzione
+    signin() e successivamente il sistema torna al menu dopo una pausa.
+
+    Questo approccio garantisce che l’accesso al sistema principale sia consentito
+    solo dopo autenticazione corretta.
+*/
     do {
         screenClear();
 
@@ -41,10 +57,40 @@ int main() {
 
     Segnalazione* lista = caricaSegnalazioni();
 
-    // LISTA VUOTA
     if (!lista) msgInfo("Lista vuota");
+    
+/*
+    Ciclo principale del sistema di gestione segnalazioni.
 
-    // LOOP
+    Il programma resta in esecuzione in un loop infinito e mostra un menu diverso
+    in base al ruolo dell’utente:
+    - menuAdmin() se l’utente è amministratore
+    - menuUser() se l’utente è un utente standard
+
+    L’utente inserisce una scelta che viene gestita tramite switch-case.
+
+    Funzionalità principali:
+    - Utente:
+        - (1) Inserimento nuova segnalazione;
+        - (2) Visualizzare TUTTE le proprie segnalazioni;
+        - (3) Ricerca segnalazione per codice;
+        - (4) Visualizzare stato segnalazione personale;
+    - Amministratore:
+        - (1) Inserimento nuova segnalazione
+        - (2) Visualizzare TUTTE le segnalazioni (utente/admin)
+        - (3) Ricerca segnalazione per codice
+        - (4) Aggiornare stato di una segnalazione
+        - (5) Filtrare le segnalazioni per categoria
+        - (6) Filtrare le segnalazioni per stato
+        - (7) Visualizzare segnalazioni urgenti
+        - (8) Eliminare una segnalazione
+        - (9) Generare il report completo
+
+    Il programma termina all'inserimento di "0"
+
+    Dopo ogni operazione viene effettuata una pausa per permettere la lettura
+    dell’output prima del refresh del menu.
+*/
     while(1) {
 
         if (isAdmin) menuAdmin();

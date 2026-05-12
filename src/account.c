@@ -17,7 +17,23 @@ void toLowerCase(char *str) {
     }
 }
 
-// ===================== CHECK USER =====================
+/*
+    Verifica se un username è già presente nel file degli utenti.
+
+    La funzione apre il file contenente gli account registrati e scorre
+    tutti gli utenti salvati confrontando lo username.
+
+    Procedura:
+    - apre il file in modalità lettura
+    - legge ogni record (username, password, isAdmin)
+    - confronta lo username corrente con quello passato in input
+    - se trova una corrispondenza, chiude il file e restituisce 1
+
+    Se il file non esiste o non vengono trovate corrispondenze:
+    - la funzione restituisce 0
+
+    Nota: viene utilizzato fscanf per la lettura strutturata dei dati.
+*/
 int userExists(char username[]) {
     FILE *fp = fopen(FILE_UTENTI, "r");
     if (!fp) return 0;
@@ -39,7 +55,28 @@ int userExists(char username[]) {
     return 0;
 }
 
-// ===================== REGISTER =====================
+/*
+    Gestisce la registrazione di un nuovo utente.
+
+    La funzione apre il file degli utenti in modalità append e consente
+    la creazione di un nuovo account.
+
+    Procedura:
+    - apre il file degli utenti
+    - richiede all’utente di inserire uno username unico
+    - verifica la presenza dello username tramite userExists()
+    - normalizza lo username (conversione in minuscolo)
+    - richiede la password
+    - imposta automaticamente il ruolo come utente standard (isAdmin = 0)
+    - salva i dati nel file in formato testo
+
+    Formato di salvataggio:
+    username password isAdmin
+
+    Se lo username è già presente, viene mostrato un errore e richiesto nuovamente.
+
+    Alla fine della registrazione viene mostrato un messaggio di conferma.
+*/
 void signin() {
     Account a;
     FILE *fp = fopen(FILE_UTENTI, "a");
@@ -80,7 +117,31 @@ void signin() {
     msgSuccess(cyan "Registrazione completata" reset);
 }
 
-// ===================== LOGIN =====================
+/*
+    Gestisce il processo di autenticazione dell’utente.
+
+    La funzione apre il file contenente gli account registrati e confronta
+    le credenziali inserite dall’utente con quelle salvate.
+
+    Procedura:
+    - apre il file degli utenti in modalità lettura
+    - richiede username e password all’utente
+    - normalizza l’username (conversione in minuscolo)
+    - scorre il file confrontando username e password
+    - se trova corrispondenza:
+        * copia l’username nella variabile di output
+        * imposta il flag isAdmin
+        * restituisce successo (1)
+
+    In caso di login riuscito:
+    - mostra un messaggio differente per admin o utente
+
+    In caso di errore:
+    - mostra messaggio di credenziali errate
+    - restituisce fallimento (0)
+
+    Nota: la funzione utilizza pause() per permettere all’utente di leggere i messaggi.
+*/
 int login(char username[], int *isAdmin) {
     FILE *fp = fopen(FILE_UTENTI, "r");
 

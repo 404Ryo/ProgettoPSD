@@ -1,2 +1,3 @@
 admin a 1
 user u 0
+user1 u 0

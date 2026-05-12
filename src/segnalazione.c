@@ -8,7 +8,28 @@
 #include "utils.h"
 #include "codice.h"
 
-// ===================== CREA SEGNALAZIONE =====================
+/*
+    Crea una nuova segnalazione associata a un utente.
+
+    La funzione alloca dinamicamente una struttura Segnalazione e ne inizializza i campi.
+    In caso di errore di allocazione, viene mostrato un messaggio e la funzione termina.
+
+    Procedura:
+    - associa la segnalazione all’utente loggato
+    - permette la scelta della categoria tramite menu
+    - assegna la categoria selezionata (o "sconosciuta" se input non valido)
+    - genera un codice identificativo per la segnalazione
+    - acquisisce la descrizione in modo sicuro
+    - acquisisce e normalizza il livello di urgenza (compreso tra 1 e 10)
+    - salva automaticamente data e ora correnti
+    - inizializza lo stato a "aperta"
+    - inizializza il puntatore next a NULL
+
+    Infine:
+    - la segnalazione viene salvata su file
+    - viene mostrato un messaggio di conferma
+    - viene restituito il puntatore alla nuova segnalazione
+*/
 Segnalazione* creaSegnalazione(char username[]) {
 
     Segnalazione* s = malloc(sizeof(Segnalazione));
@@ -67,7 +88,16 @@ Segnalazione* creaSegnalazione(char username[]) {
     return s;
 }
 
-// ===================== AGGIUNGI =====================
+/*
+    Aggiunge una nuova segnalazione alla lista.
+
+    La funzione crea una nuova segnalazione associata all’utente tramite creaSegnalazione().
+    Se la creazione fallisce, la lista originale viene restituita invariata.
+
+    Se la creazione va a buon fine:
+    - la nuova segnalazione viene inserita in testa alla lista
+    - il puntatore alla nuova testa della lista viene restituito
+*/
 Segnalazione* aggiungiSegnalazione(Segnalazione* head, char username[]) {
 
     Segnalazione* nuovo = creaSegnalazione(username);
@@ -77,7 +107,27 @@ Segnalazione* aggiungiSegnalazione(Segnalazione* head, char username[]) {
     return nuovo;
 }
 
-// ===================== STAMPA SEGNALAZIONI =====================
+/*
+    Stampa tutte le segnalazioni presenti nella lista.
+
+    La funzione scorre la lista collegata e mostra i dettagli di ogni segnalazione.
+
+    Gestione dei permessi:
+    - Se l’utente non è amministratore, vengono mostrate solo le segnalazioni
+      appartenenti al proprio username.
+    - Se l’utente è amministratore, vengono mostrate tutte le segnalazioni.
+
+    Per ogni segnalazione vengono stampati:
+    - codice
+    - utente proprietario
+    - categoria
+    - descrizione
+    - data di creazione
+    - livello di urgenza
+    - stato della segnalazione
+
+    Se nessuna segnalazione viene trovata, viene mostrato un messaggio di errore.
+*/
 void stampaSegnalazioni(Segnalazione* head, char username[], int isAdmin) {
 
     int trovato = 0;
@@ -112,7 +162,21 @@ void stampaSegnalazioni(Segnalazione* head, char username[], int isAdmin) {
     if (!trovato) msgError("Nessuna segnalazione");
 }
 
-// ===================== STAMPA SINGOLA =====================
+/*
+    Stampa i dettagli di una singola segnalazione.
+
+    La funzione verifica inizialmente se il puntatore è valido (non NULL);
+    in caso contrario termina immediatamente.
+
+    Vengono poi mostrati tutti i campi principali della segnalazione:
+    - codice identificativo
+    - utente proprietario
+    - categoria
+    - descrizione
+    - data di creazione
+    - livello di urgenza
+    - stato della segnalazione
+*/
 void stampaSegnalazione(Segnalazione* head) {
 
     if (!head) return;
@@ -133,7 +197,19 @@ void stampaSegnalazione(Segnalazione* head) {
         printf(cyan "Stato: " red "%s\n" reset, head->stato);
 }
 
-// ===================== STATO UTENTE =====================
+/*
+    Permette a un utente di visualizzare lo stato di una propria segnalazione.
+
+    La funzione richiede l’inserimento del codice della segnalazione e poi
+    scorre la lista per cercare una corrispondenza.
+
+    Viene restituita la segnalazione solo se:
+    - il codice corrisponde
+    - e la segnalazione appartiene all’utente loggato
+
+    Se la segnalazione viene trovata, viene stampato il suo stato.
+    In caso contrario, viene mostrato un messaggio di errore.
+*/
 void statoSegnalazioneUtente(Segnalazione* head, char username[]) {
 
     int codice;
@@ -153,7 +229,18 @@ void statoSegnalazioneUtente(Segnalazione* head, char username[]) {
     msgError("Non trovata");
 }
 
-// ===================== CERCA CODICE =====================
+/*
+    Cerca una segnalazione nella lista tramite codice identificativo.
+
+    La funzione scorre la lista collegata e confronta il codice di ogni nodo
+    con quello fornito in input.
+
+    Se viene trovata una corrispondenza:
+    - viene restituito il puntatore alla segnalazione
+
+    Se nessuna segnalazione corrisponde:
+    - viene restituito NULL
+*/
 Segnalazione* cercaPerCodice(Segnalazione* head, int codice) {
 
     while (head) {
@@ -164,7 +251,27 @@ Segnalazione* cercaPerCodice(Segnalazione* head, int codice) {
     return NULL;
 }
 
-// ===================== CERCA CATEGORIA =====================
+/*
+    Permette di cercare e visualizzare le segnalazioni filtrandole per categoria.
+
+    La funzione mostra un menu di categorie disponibili e permette all’utente di selezionarne una.
+    In base alla scelta, viene assegnata la categoria corrispondente e la lista viene filtrata.
+
+    Procedura:
+    - acquisisce la scelta dell’utente
+    - valida la categoria selezionata
+    - scorre l’intera lista delle segnalazioni
+    - stampa solo quelle appartenenti alla categoria scelta
+
+    Per ogni segnalazione trovata vengono mostrati:
+    - codice
+    - utente
+    - descrizione
+    - stato
+
+    Se non vengono trovate segnalazioni per la categoria selezionata,
+    viene mostrato un messaggio informativo.
+*/
 void cercaPerCategoria(Segnalazione* head) {
 
     int scelta;
@@ -242,7 +349,35 @@ void cercaPerCategoria(Segnalazione* head) {
         msgInfo("Nessuna segnalazione in questa categoria");
 }
 
-// ===================== UPDATE STATO =====================
+/*
+    Permette all’amministratore di aggiornare lo stato di una segnalazione.
+
+    La funzione verifica inizialmente i permessi: solo un admin può modificare lo stato.
+    In caso contrario, viene mostrato un messaggio di errore e l’esecuzione termina.
+
+    Procedura:
+    - vengono mostrate le segnalazioni aperte
+    - l’utente inserisce il codice della segnalazione da modificare
+    - se il codice è 0, l’operazione viene annullata
+    - viene cercata la segnalazione nella lista
+
+    Gestione stati:
+    - se lo stato è "aperta":
+        -> può diventare "in lavorazione" oppure "chiuso"
+        -> è disponibile anche l’opzione di annullamento
+
+    - se lo stato è "in lavorazione":
+        -> può essere chiusa oppure annullata
+
+    - se lo stato è "chiuso":
+        -> non può più essere modificato
+
+    Dopo ogni modifica valida:
+    - la lista viene salvata su file
+    - viene mostrato un messaggio di conferma
+
+    Nota: l’aggiornamento è persistente grazie alla funzione salvaTutto().
+*/
 void aggiornaStato(Segnalazione* head, int isAdmin) {
 
     if (!isAdmin) {
@@ -339,7 +474,20 @@ void aggiornaStato(Segnalazione* head, int isAdmin) {
     msgSuccess("Stato aggiornato correttamente");
 }
 
-// ================= Stampa ================= 
+/*
+    Stampa tutte le segnalazioni rilevanti per l’amministratore.
+
+    La funzione scorre l’intera lista e mostra solo le segnalazioni che si trovano
+    negli stati "aperta" o "in lavorazione".
+
+    Per ogni segnalazione vengono visualizzati:
+    - codice identificativo
+    - categoria
+    - descrizione
+    - stato
+
+    Se non viene trovata nessuna segnalazione valida, viene mostrato un messaggio informativo.
+*/
 void stampaAperteAdmin(Segnalazione* head) {
     int trovate = 0;
 
@@ -369,7 +517,26 @@ void stampaAperteAdmin(Segnalazione* head) {
         msgInfo("Nessuna segnalazione aperta");
 }
 
-// ===================== STAMPA STATO =====================
+/*
+    Filtra e stampa le segnalazioni in base allo stato fornito.
+
+    La funzione riceve una lista di segnalazioni e uno stato da utilizzare come filtro.
+    Se lo stato è valido (diverso da "EXIT"), viene mostrata una sezione con intestazione
+    e vengono stampate tutte le segnalazioni corrispondenti.
+
+    Per ogni segnalazione filtrata vengono visualizzati:
+    - codice
+    - categoria
+    - descrizione
+    - livello di urgenza
+    - data di creazione
+
+    Se non vengono trovate segnalazioni con lo stato richiesto,
+    viene mostrato un messaggio informativo.
+
+    Nota: se lo stato è "EXIT", la funzione non esegue alcuna stampa utile
+    e interrompe la gestione del filtro.
+*/
 void stampaPerStato(Segnalazione* head, char stato[]) {
 
     int trovate = 0;
@@ -410,7 +577,27 @@ void stampaPerStato(Segnalazione* head, char stato[]) {
     }
 }
 
-// ===================== URGENTI =====================
+/*
+    Stampa le segnalazioni suddividendole in base al livello di urgenza.
+
+    La funzione percorre la lista due volte:
+    - prima per mostrare le segnalazioni urgenti (urgenza >= 8)
+    - poi per mostrare quelle meno urgenti (urgenza < 8)
+
+    In entrambi i casi vengono escluse le segnalazioni con stato "chiuso".
+
+    Per ogni segnalazione vengono visualizzati:
+    - livello di urgenza
+    - codice identificativo
+    - categoria
+    - descrizione
+
+    Se non vengono trovate segnalazioni in una delle due categorie,
+    viene mostrato un messaggio informativo.
+
+    La funzione serve a fornire una panoramica ordinata delle segnalazioni
+    in base alla priorità di intervento.
+*/
 void stampaUrgenti(Segnalazione* head) {
 
     if (!head) {
@@ -475,7 +662,27 @@ void stampaUrgenti(Segnalazione* head) {
     }
 }
 
-// ===================== DELETE =====================
+/*
+    Permette all’amministratore di eliminare una segnalazione.
+
+    Procedura:
+    - vengono mostrate tutte le segnalazioni con stato "chiuso"
+    - se non esistono segnalazioni eliminabili, la funzione termina
+    - l’utente inserisce il codice della segnalazione da eliminare
+    - viene verificata l’esistenza della segnalazione nella lista
+
+    Prima dell’eliminazione:
+    - viene richiesta conferma all’utente (Y/N)
+
+    Eliminazione:
+    - se il nodo è in testa viene aggiornato head
+    - altrimenti viene ricollegata la lista bypassando il nodo
+    - la memoria del nodo viene liberata con free()
+
+    Infine:
+    - la lista aggiornata viene salvata su file
+    - viene mostrato un messaggio di conferma
+*/
 Segnalazione* eliminaSegnalazione(Segnalazione* head, int isAdmin) {
 
     if (!isAdmin) {
@@ -489,7 +696,7 @@ Segnalazione* eliminaSegnalazione(Segnalazione* head, int isAdmin) {
     printf(cyan "        ELIMINA SEGNALAZIONE\n" reset);
     printf(cyan "====================================\n\n" reset);
 
-    // 🔥 mostra solo segnalazioni chiuse
+    // mostra solo segnalazioni chiuse
     Segnalazione* tmp = head;
     int trovate = 0;
 
@@ -560,7 +767,34 @@ Segnalazione* eliminaSegnalazione(Segnalazione* head, int isAdmin) {
     return head;
 }
 
-// ===================== REPORT =====================
+/*
+    Genera un report statistico completo sulle segnalazioni.
+
+    La funzione analizza l’intera lista e calcola diverse metriche aggregate.
+
+    Statistiche calcolate:
+    - numero totale di segnalazioni
+    - numero di segnalazioni per stato:
+        * aperte
+        * in lavorazione
+        * chiuse
+    - numero di segnalazioni per categoria:
+        * illuminazione
+        * buche
+        * rifiuti
+        * impianti
+
+    Inoltre determina:
+    - la categoria più frequente tra tutte le segnalazioni
+
+    Il risultato viene stampato a schermo in un report formattato e suddiviso in sezioni:
+    - riepilogo generale
+    - distribuzione per stato
+    - distribuzione per categoria
+    - categoria più frequente
+
+    La funzione non modifica la lista, ma esegue solo operazioni di analisi e output.
+*/
 void generaReport(Segnalazione* head) {
 
     int totale = 0;
@@ -654,7 +888,19 @@ void generaReport(Segnalazione* head) {
     printf(green "%s (%d segnalazioni)\n" reset, frequente, max);
 }
 
-// ===================== SALVA =====================
+/*
+    Salva una singola segnalazione su file in modalità append.
+
+    La funzione apre il file "file/segnalazioni.txt" in modalità aggiunta ("a")
+    e scrive i dati della segnalazione in formato testuale delimitato da '|'.
+
+    Formato di salvataggio:
+    codice | codiceCompleto | utente | categoria | descrizione | data | urgenza | stato
+
+    Se il file non può essere aperto, la funzione termina senza eseguire operazioni.
+
+    Dopo la scrittura, il file viene chiuso correttamente per garantire la persistenza dei dati.
+*/
 void salvaSegnalazione(Segnalazione* s) {
 
     FILE* f = fopen("file/segnalazioni.txt", "a");
@@ -674,7 +920,30 @@ void salvaSegnalazione(Segnalazione* s) {
     fclose(f);
 }
 
-// ===================== CARICA =====================
+/*
+    Carica tutte le segnalazioni dal file e le ricostruisce in memoria come lista collegata.
+
+    La funzione apre il file "file/segnalazioni.txt" in modalità lettura e legge riga per riga.
+    Ogni riga rappresenta una segnalazione serializzata con campi separati dal carattere '|'.
+
+    Procedura:
+    - ogni riga viene suddivisa tramite strtok
+    - i valori vengono convertiti e copiati nei campi della struttura Segnalazione
+    - i valori numerici (codice e urgenza) vengono convertiti con atoi
+    - le stringhe vengono copiate con strncpy per evitare overflow
+
+    Gestione errori:
+    - se l'allocazione dinamica fallisce, la riga viene ignorata
+    - se un campo è mancante o non valido, la segnalazione viene scartata
+
+    Costruzione lista:
+    - la lista viene costruita in modo sequenziale
+    - viene mantenuto un puntatore tail per inserimenti efficienti in coda
+
+    Alla fine:
+    - il file viene chiuso
+    - viene restituito il puntatore alla testa della lista (o NULL se vuota)
+*/
 Segnalazione* caricaSegnalazioni() {
 
     FILE* f = fopen("file/segnalazioni.txt", "r");

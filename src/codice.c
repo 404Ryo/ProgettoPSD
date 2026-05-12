@@ -4,7 +4,28 @@
 #include <time.h>
 #include "codice.h"
 
-// ===================== ASSEGNA CATEGORIA =====================
+/*
+    Assegna la categoria e il prefisso associato in base alla scelta dell’utente.
+
+    La funzione riceve:
+    - un valore numerico (scelta)
+    - una stringa categoria da riempire
+    - una stringa prefix da riempire
+
+    In base alla scelta, vengono impostati:
+    - il nome della categoria
+    - un prefisso alfanumerico utilizzato per la generazione del codice
+
+    Mappatura:
+    - 1 → illuminazione / LMN
+    - 2 → buche / BCH
+    - 3 → rifiuti / RFT
+    - 4 → impianti / MPN
+    - default → sconosciuta / UNK
+
+    La funzione è dichiarata static per limitarne la visibilità al solo file
+    in cui è definita.
+*/
 static void assegnaCategoria(int scelta, char categoria[], char prefix[]) {
 
     switch (scelta) {
@@ -36,7 +57,27 @@ static void assegnaCategoria(int scelta, char categoria[], char prefix[]) {
     }
 }
 
-// ===================== GENERA CODICE =====================
+/*
+    Genera un codice identificativo per una segnalazione.
+
+    La funzione costruisce un codice univoco combinando:
+    - prefisso della categoria
+    - data corrente (formato YYYYMMDD)
+    - numero casuale
+
+    Procedura:
+    - inizializza il generatore di numeri casuali una sola volta
+    - ottiene categoria e prefisso tramite assegnaCategoria()
+    - recupera la data corrente del sistema
+    - genera un numero casuale per rendere il codice univoco
+    - salva il valore numerico generato in idNumerico
+
+    Formato finale del codice:
+    PREFIX-YYYYMMDD-RANDOM
+
+    Esempio:
+    LMN-20260512-0423
+*/
 void generaCodice(int sceltaCategoria,
                   char categoria[],
                   char outputCodice[],

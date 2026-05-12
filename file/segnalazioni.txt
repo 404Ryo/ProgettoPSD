@@ -1,15 +1,10 @@
 5405|BCH-20260511-5405|admin|buche|Presenza di una grossa buca al centro della carreggiata in Via Roma vicino al semaforo, rischio danni ai veicoli|11/05/2026 01:11|10|aperta
-
 1931|MPN-20260511-1931|admin|impianti|Guasto all'impianto semaforico dell'incrocio principale, il semaforo resta lampeggiante anche di giorno|10/05/2026 00:11|8|in lavorazione
-
 0764|BCH-20260511-0764|admin|buche|Asfalto dissestato con diverse crepe e avvallamenti davanti alla scuola elementare|11/05/2026 01:38|9|aperta
-
 8821|LMN-20260511-8821|user|illuminazione|Lampione spento da diversi giorni nel parcheggio comunale, zona molto buia durante la notte|11/05/2026 02:04|7|aperta
-
 3412|RFT-20260511-3412|user|rifiuti|Accumulo di sacchi della spazzatura non ritirati vicino ai cassonetti in Via Napoli|11/05/2026 02:10|6|aperta
-
 9150|MPN-20260511-9150|admin|impianti|Fontana pubblica non funzionante e perdita continua d'acqua nella piazza centrale|11/05/2026 02:16|5|chiusa
-
 4477|LMN-20260511-4477|user|illuminazione|Illuminazione intermittente nel sottopassaggio pedonale, visibilità ridotta nelle ore serali|11/05/2026 02:20|8|in lavorazione
+6284|RFT-20260511-6284|user|rifiuti|Presenza di rifiuti ingombranti abbandonati vicino all'area ecologica comunale|11/05/2026 02:24|9|aperta
+7054|LMN-20260512-7054|admin|illuminazione|Illuminazione scarsa in via x|12/05/2026 14:24|7|aperta
 
-6284|RFT-20260511-6284|user|rifiuti|Presenza di rifiuti ingombranti abbandonati vicino all'area ecologica comunale|11/05/2026 02:24|9|aperta7054|LMN-20260512-7054|admin|illuminazione|Illuminazione scarsa in via x|12/05/2026 14:24|7|aperta
